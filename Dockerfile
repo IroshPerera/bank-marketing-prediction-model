@@ -1,5 +1,5 @@
-# Use AWS-provided Python 3.8 base image
-FROM public.ecr.aws/sam/build-python3.9:1.136.0-20250327231329
+# Use a lightweight Python image
+FROM python:3.10-slim
 # Set the working directory to /app
 WORKDIR /app
 
