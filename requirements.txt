@@ -1,4 +1,3 @@
-numpy
 Flask
 Flask-Cors
 pandas
