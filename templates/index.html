@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Client Subscription Prediction</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Predict Bank Client Subscription</h2>
+        <form id="predictForm">
+            <!-- Numeric Inputs -->
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" class="form-control" id="age" required>
+            </div>
+            <div class="form-group">
+                <label for="balance">Average Yearly Balance (in euros):</label>
+                <input type="number" class="form-control" id="balance" required>
+            </div>
+            
+            <!-- Categorical Inputs -->
+            <div class="form-group">
+                <label for="job">Job:</label>
+                <select class="form-control" id="job" required>
+                    <option value="admin.">Admin</option>
+                    <option value="blue-collar">Blue-collar</option>
+                    <option value="entrepreneur">Entrepreneur</option>
+                    <option value="housemaid">Housemaid</option>
+                    <option value="management">Management</option>
+                    <option value="retired">Retired</option>
+                    <option value="self-employed">Self-employed</option>
+                    <option value="services">Services</option>
+                    <option value="student">Student</option>
+                    <option value="technician">Technician</option>
+                    <option value="unemployed">Unemployed</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="marital">Marital Status:</label>
+                <select class="form-control" id="marital" required>
+                    <option value="divorced">Divorced</option>
+                    <option value="married">Married</option>
+                    <option value="single">Single</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="education">Education Level:</label>
+                <select class="form-control" id="education" required>
+                    <option value="basic.4y">Basic 4 years</option>
+                    <option value="basic.6y">Basic 6 years</option>
+                    <option value="basic.9y">Basic 9 years</option>
+                    <option value="high.school">High School</option>
+                    <option value="illiterate">Illiterate</option>
+                    <option value="professional.course">Professional Course</option>
+                    <option value="university.degree">University Degree</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="default">Has Credit in Default?</label>
+                <select class="form-control" id="default" required>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="housing">Has Housing Loan?</label>
+                <select class="form-control" id="housing" required>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="loan">Has Personal Loan?</label>
+                <select class="form-control" id="loan" required>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="contact">Contact Communication Type:</label>
+                <select class="form-control" id="contact" required>
+                    <option value="cellular">Cellular</option>
+                    <option value="telephone">Telephone</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="day_of_week">Last Contact Day of the Week:</label>
+                <select class="form-control" id="day_of_week" required>
+                    <option value="mon">Monday</option>
+                    <option value="tue">Tuesday</option>
+                    <option value="wed">Wednesday</option>
+                    <option value="thu">Thursday</option>
+                    <option value="fri">Friday</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="month">Last Contact Month:</label>
+                <select class="form-control" id="month" required>
+                    <option value="jan">January</option>
+                    <option value="feb">February</option>
+                    <option value="mar">March</option>
+                    <option value="apr">April</option>
+                    <option value="may">May</option>
+                    <option value="jun">June</option>
+                    <option value="jul">July</option>
+                    <option value="aug">August</option>
+                    <option value="sep">September</option>
+                    <option value="oct">October</option>
+                    <option value="nov">November</option>
+                    <option value="dec">December</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Last Contact Duration (in seconds):</label>
+                <input type="number" class="form-control" id="duration" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div id="result" class="mt-4" style="display:none;">
+            <h4>Prediction Result:</h4>
+            <p id="prediction"></p>
+        </div>
+    </div>
+
+    <script>
+        // Handle form submission
+        $('#predictForm').on('submit', function(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = {
+                age: $('#age').val(),
+                balance: $('#balance').val(),
+                job: $('#job').val(),
+                marital: $('#marital').val(),
+                education: $('#education').val(),
+                default: $('#default').val(),
+                housing: $('#housing').val(),
+                loan: $('#loan').val(),
+                contact: $('#contact').val(),
+                day_of_week: $('#day_of_week').val(),
+                month: $('#month').val(),
+                duration: $('#duration').val()
+            };
+
+            // Send data to Flask backend
+            $.ajax({
+                url: '/predict',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    // Display result
+                    $('#prediction').text('Subscription prediction: ' + (response.Subscribed === 1 ? 'Subscribed' : 'Not Subscribed'));
+                    $('#result').show();
+                },
+                error: function(xhr, status, error) {
+                    $('#prediction').text('Error: ' + error);
+                    $('#result').show();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
