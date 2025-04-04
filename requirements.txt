@@ -2,4 +2,4 @@ Flask
 Flask-Cors
 pandas
 joblib
-scikit-learn
+scikit-learn==1.5.1
